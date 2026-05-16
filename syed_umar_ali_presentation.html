@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="slides-format" content="viewport">
+    <title>Technical Recruiter for Remote SaaS & Engineering Teams — Syed Umar Ali</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-bg: #0a0f1e;
+            --color-bg-deep: #050810;
+            --color-surface: #111827;
+            --color-text: #f1f5f9;
+            --color-text-secondary: #cbd5e1;
+            --color-text-muted: #94a3b8;
+            --color-accent-1: #3B82F6;
+            --color-accent-2: #60A5FA;
+            --color-accent-3: #C9A84C;
+            --color-glass-bg: rgba(255,255,255,0.06);
+            --color-glass-border: rgba(255,255,255,0.10);
+            --color-vignette: rgba(0,0,0,0.45);
+            --font-display: "Playfair Display", serif;
+            --font-body: "DM Sans", sans-serif;
+        }
+    </style>
+    <style>
+        :root { --color-bg: #0a0f1e; --color-text: #f1f5f9; --glow-color-rgb: 59,130,246; }
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { background: var(--color-bg); margin: 0; }
+        body { font-family: "DM Sans", sans-serif; color: var(--color-text); overflow: hidden; height: 100vh; width: 100vw; }
+        .deck { width: 100vw; height: 100vh; position: relative; }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--color-bg); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: scale(0.95); transition: opacity 0.7s ease, transform 0.7s ease; pointer-events: none; overflow: hidden; }
+        .slide.active { opacity: 1; transform: scale(1); pointer-events: all; }
+        .slide > .content { position: relative; z-index: 2; width: 100%; max-width: 1100px; padding: clamp(1.5rem, 4vw, 4rem); }
+        .nav-controls { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; z-index: 100; background: rgba(255,255,255,0.06); backdrop-filter: blur(10px); padding: 8px 22px; border-radius: 40px; border: 1px solid rgba(255,255,255,0.10); }
+        .nav-btn { width: 36px; height: 36px; border: none; background: rgba(255,255,255,0.06); color: #3B82F6; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.3s; }
+        .nav-btn:hover { background: rgba(255,255,255,0.12); }
+        .slide-dots { display: flex; gap: 7px; }
+        .slide-dots .dot { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,0.15); cursor: pointer; transition: background 0.3s, transform 0.3s; }
+        .slide-dots .dot.active { background: #3B82F6; transform: scale(1.3); }
+        .slide-counter { font-size: 0.78rem; color: #94a3b8; min-width: 38px; text-align: center; }
+        .reveal { opacity: 0; transform: translateY(20px); }
+        .text-glow { text-shadow: 0 0 20px rgba(59,130,246,0.5), 0 0 40px rgba(59,130,246,0.2); }
+        .stat-glow { text-shadow: 0 0 30px rgba(59,130,246,0.6), 0 0 60px rgba(59,130,246,0.25); }
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(59,130,246,0.5), 0 0 40px rgba(59,130,246,0.2); }
+            50% { text-shadow: 0 0 30px rgba(59,130,246,0.8), 0 0 60px rgba(59,130,246,0.3); }
+        }
+        .glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+        @keyframes float-slow {
+            0% { transform: translate(0,0) scale(1); } 25% { transform: translate(60px,-50px) scale(1.12); }
+            50% { transform: translate(-40px,40px) scale(0.9); } 75% { transform: translate(50px,20px) scale(1.08); } 100% { transform: translate(0,0) scale(1); }
+        }
+        @keyframes float-drift {
+            0% { transform: translate(0,0) scale(1) rotate(0deg); } 33% { transform: translate(-50px,-60px) scale(1.15) rotate(3deg); }
+            66% { transform: translate(40px,30px) scale(0.88) rotate(-2deg); } 100% { transform: translate(0,0) scale(1) rotate(0deg); }
+        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+        .gradient-mesh { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); animation: float-slow 10s ease-in-out infinite; }
+        .blob:nth-child(2) { animation: float-drift 14s ease-in-out infinite; }
+        .blob:nth-child(3) { animation: float-slow 18s ease-in-out infinite reverse; }
+        .slide::before { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); background-repeat:repeat; background-size:256px 256px; opacity:0.03; mix-blend-mode:overlay; }
+        .slide::after { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:radial-gradient(ellipse at center, transparent 50%, var(--color-vignette) 100%); }
+        .bar-fill { border-radius: 4px; height: 10px; background: linear-gradient(90deg, #3B82F6, #60A5FA); }
+        .process-step { display: flex; align-items: flex-start; gap: 1rem; padding: 0.75rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+        .step-num { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #3B82F6, #1D4ED8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; }
+        .glass-card { background: rgba(255,255,255,0.06); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.10); border-radius: 16px; padding: 1.5rem; transition: transform 0.3s, box-shadow 0.3s; }
+        .glass-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(59,130,246,0.15); }
+        .tool-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.9rem; border-radius: 20px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); font-size: 0.78rem; font-weight: 500; color: #93C5FD; margin: 0.2rem; }
+        .funnel-step { text-align: center; padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; }
+        .quote-card { border-left: 3px solid #3B82F6; background: rgba(255,255,255,0.04); border-radius: 0 12px 12px 0; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+    </style>
+</head>
+<body>
+<div class="mouse-spotlight" style="position:fixed;inset:0;z-index:99;pointer-events:none;"></div>
+<div class="deck">
+
+    <!-- SLIDE 1: TITLE -->
+    <div class="slide slide-1 active" data-slide="1">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:520px;height:520px;top:-120px;right:-100px;background:#3B82F6;opacity:0.14;"></div>
+            <div class="blob" style="width:350px;height:350px;bottom:-80px;left:-60px;background:#C9A84C;opacity:0.10;"></div>
+            <div class="blob" style="width:250px;height:250px;top:35%;left:10%;background:#1D4ED8;opacity:0.09;"></div>
+        </div>
+        <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+        <div class="content text-center">
+            <div style="font-size:88px;margin-bottom:1rem;animation:float 3s ease-in-out infinite;" class="reveal">🎯</div>
+            <h1 style="font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:900;background:linear-gradient(135deg,#60A5FA,#93C5FD,#C9A84C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:1rem;" class="reveal">Technical Recruiter for<br>Remote SaaS & Engineering Teams</h1>
+            <p style="font-size:clamp(0.85rem,1.4vw,1.1rem);color:#94a3b8;letter-spacing:5px;text-transform:uppercase;font-weight:300;margin-bottom:1.5rem;" class="reveal">Syed Umar Ali · Embedded Recruiting Partner</p>
+            <div style="display:inline-flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;" class="reveal">
+                <span class="tool-badge">🕐 8 AM – 5:30 PM ET</span>
+                <span class="tool-badge">🌐 US Remote Teams</span>
+                <span class="tool-badge">💼 Intellibus</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 2: WHO I HELP -->
+    <div class="slide slide-2" data-slide="2">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:380px;height:380px;top:-80px;right:-80px;background:#3B82F6;opacity:0.08;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-60px;left:-40px;background:#C9A84C;opacity:0.07;"></div>
+        </div>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.5rem;" class="reveal">Who I Help</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;margin-bottom:0.4rem;" class="reveal">US-Based Startups &amp; SaaS Companies<br>Hiring Senior Remote Engineers</h2>
+            <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:1.5rem;" class="reveal">I partner with CTOs, VPs of Engineering, and Hiring Managers who are frustrated with slow pipelines, unqualified resumes, and agencies that don't understand their stack.</p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;" class="reveal">
+                <div class="glass-card">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">🚀</div>
+                    <h4 style="font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;">Series A–C Startups</h4>
+                    <p style="color:#94a3b8;font-size:0.78rem;">Scaling eng teams from 5 to 30+. No internal TA team yet.</p>
+                </div>
+                <div class="glass-card">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">🏦</div>
+                    <h4 style="font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;">FinTech & Banking SaaS</h4>
+                    <p style="color:#94a3b8;font-size:0.78rem;">Need engineers with deep domain expertise in payments & core banking.</p>
+                </div>
+                <div class="glass-card">
+                    <div style="font-size:2rem;margin-bottom:0.5rem;">☁️</div>
+                    <h4 style="font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;">Cloud & Data Platforms</h4>
+                    <p style="color:#94a3b8;font-size:0.78rem;">Hiring senior data engineers, architects, and platform leads.</p>
+                </div>
+            </div>
+            <div style="margin-top:1rem;padding:0.9rem 1.2rem;border-radius:12px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);" class="reveal">
+                <p style="color:#93C5FD;font-size:0.85rem;margin:0;"><strong>Common pain point:</strong> Roles open 60–90+ days · Internal recruiters lack tech depth · Agencies send bulk, unscreened resumes</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 3: RECRUITMENT EXPERTISE -->
+    <div class="slide slide-3" data-slide="3">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:400px;height:400px;top:-100px;left:-80px;background:#3B82F6;opacity:0.09;"></div>
+            <div class="blob" style="width:280px;height:280px;bottom:-70px;right:-50px;background:#C9A84C;opacity:0.07;"></div>
+        </div>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;" class="reveal">Expertise</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:1rem;" class="reveal">Technical Domains &amp; Seniority Levels</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;" class="reveal">
+                <div class="process-step">
+                    <div style="font-size:1.6rem;">☕</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;">Java Backend Architecture</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Senior → Staff → Principal · Spring Boot · Microservices · Kafka</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div style="font-size:1.6rem;">📊</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;">Data Engineering</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Lead & Staff · Spark · Databricks · Airflow · dbt · Snowflake</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div style="font-size:1.6rem;">⚡</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;">Event-Driven Architecture</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Staff/Principal · Kafka · Event Sourcing · CQRS · RabbitMQ</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div style="font-size:1.6rem;">🌐</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;">Full Stack Engineering</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Mid–Senior · React · TypeScript · Node.js · REST APIs</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div style="font-size:1.6rem;">🏦</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;">FinTech & Banking Platforms</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Senior–Principal · Payments · ISO 20022 · Real-Time Settlement</div>
+                    </div>
+                </div>
+                <div class="process-step">
+                    <div style="font-size:1.6rem;">🎯</div>
+                    <div>
+                        <div style="font-weight:700;font-size:0.9rem;">Technical Delivery & Program</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Lead–Director · Agile · SAFe · Stakeholder Management</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;" class="reveal">
+                <span style="font-size:0.75rem;color:#94a3b8;font-weight:500;">60% of placements are passive candidates  ·  Avg. time-to-shortlist:</span>
+                <span style="font-size:0.75rem;color:#60A5FA;font-weight:700;">8–12 business days</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 4: STRUCTURED HIRING PROCESS -->
+    <div class="slide slide-4" data-slide="4">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:350px;height:350px;top:-60px;right:-60px;background:#3B82F6;opacity:0.08;"></div>
+            <div class="blob" style="width:220px;height:220px;bottom:-40px;left:-30px;background:#C9A84C;opacity:0.07;"></div>
+        </div>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;" class="reveal">My Process</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:1rem;" class="reveal">6-Step Structured Hiring Process</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.65rem;" class="reveal">
+                <div class="glass-card" style="padding:1rem;">
+                    <div class="step-num" style="margin-bottom:0.5rem;">1</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">Discovery</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">60-min intake · tech stack deep-dive · define ICP · agree SLAs</div>
+                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#60A5FA;">Day 1–2</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;">
+                    <div class="step-num" style="margin-bottom:0.5rem;">2</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">Targeted Sourcing</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">LinkedIn · GitHub · Boolean search · 40–80 candidate long-list</div>
+                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#60A5FA;">Day 2–5</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;">
+                    <div class="step-num" style="margin-bottom:0.5rem;">3</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">Pre-Screening</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">30–45 min technical + behavioral · custom scorecard per role</div>
+                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#60A5FA;">Day 5–8</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;">
+                    <div class="step-num" style="margin-bottom:0.5rem;">4</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">Shortlist Delivery</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">3–5 candidates · detailed profiles · interview recommendations</div>
+                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#60A5FA;">Day 8–10</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;">
+                    <div class="step-num" style="margin-bottom:0.5rem;">5</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">Interview Support</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">Scheduling · candidate prep · debrief facilitation · feedback loop</div>
+                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#60A5FA;">Ongoing</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;">
+                    <div class="step-num" style="margin-bottom:0.5rem;">6</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.25rem;">Offer & Close</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">Compensation strategy · counter-offer coaching · 30-day check-in</div>
+                    <div style="margin-top:0.5rem;font-size:0.68rem;color:#60A5FA;">Day 14–21</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 5: CANDIDATE SOURCING STRATEGY -->
+    <div class="slide slide-5" data-slide="5">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:420px;height:420px;top:-100px;right:-90px;background:#1D4ED8;opacity:0.10;"></div>
+            <div class="blob" style="width:300px;height:300px;bottom:-70px;left:-50px;background:#C9A84C;opacity:0.08;"></div>
+        </div>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;" class="reveal">Sourcing Strategy</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:1rem;" class="reveal">How I Find Engineers Others Miss</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;" class="reveal">
+                <div>
+                    <h4 style="color:#60A5FA;font-size:0.82rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.75rem;">The Hiring Funnel</h4>
+                    <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                        <div class="funnel-step" style="background:rgba(59,130,246,0.25);border:1px solid rgba(59,130,246,0.4);font-size:0.82rem;">🔍 40–80 Sourced Profiles</div>
+                        <div style="text-align:center;color:#64748b;font-size:0.7rem;">↓ Outreach Response</div>
+                        <div class="funnel-step" style="background:rgba(59,130,246,0.18);border:1px solid rgba(59,130,246,0.3);font-size:0.82rem;">📞 15–25 Initial Conversations</div>
+                        <div style="text-align:center;color:#64748b;font-size:0.7rem;">↓ Technical Pre-Screen</div>
+                        <div class="funnel-step" style="background:rgba(59,130,246,0.13);border:1px solid rgba(59,130,246,0.25);font-size:0.82rem;">✅ 6–10 Technical Screens</div>
+                        <div style="text-align:center;color:#64748b;font-size:0.7rem;">↓ Final Qualification</div>
+                        <div class="funnel-step" style="background:rgba(201,168,76,0.2);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;font-size:0.82rem;">⭐ 3–5 Submitted to Client</div>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <div class="glass-card" style="padding:1rem;">
+                        <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;">🔵 LinkedIn Recruiter</div>
+                        <p style="color:#94a3b8;font-size:0.75rem;margin:0;">Multi-layer Boolean · title + tech + domain + seniority filters</p>
+                    </div>
+                    <div class="glass-card" style="padding:1rem;">
+                        <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;">🐙 GitHub Signal Mining</div>
+                        <p style="color:#94a3b8;font-size:0.75rem;margin:0;">Open-source contributors to Spark, Kafka, Spring Boot repos</p>
+                    </div>
+                    <div class="glass-card" style="padding:1rem;">
+                        <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;">🎤 Conference Speakers</div>
+                        <p style="color:#94a3b8;font-size:0.75rem;margin:0;">QCon, Devoxx, JavaOne — thought leaders in the domain</p>
+                    </div>
+                    <div class="glass-card" style="padding:1rem;">
+                        <div style="font-weight:700;font-size:0.88rem;margin-bottom:0.3rem;">💬 Community Sourcing</div>
+                        <p style="color:#94a3b8;font-size:0.75rem;margin:0;">Stack Overflow, dev.to, remote dev communities, Slack groups</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: TOOLS & PLATFORMS -->
+    <div class="slide slide-6" data-slide="6">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:360px;height:360px;top:-70px;left:-60px;background:#3B82F6;opacity:0.09;"></div>
+            <div class="blob" style="width:280px;height:280px;bottom:-60px;right:-40px;background:#C9A84C;opacity:0.07;"></div>
+        </div>
+        <canvas class="particle-canvas-ambient" style="position:absolute;inset:0;z-index:1;"></canvas>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;" class="reveal">Toolkit</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:1.2rem;" class="reveal">Tools &amp; Platforms I Use Daily</h2>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;" class="reveal">
+                <div>
+                    <h4 style="color:#60A5FA;font-size:0.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.75rem;border-bottom:1px solid rgba(96,165,250,0.2);padding-bottom:0.4rem;">Sourcing</h4>
+                    <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                        <span class="tool-badge">🔵 LinkedIn Recruiter</span>
+                        <span class="tool-badge">🐙 GitHub</span>
+                        <span class="tool-badge">📚 Stack Overflow</span>
+                        <span class="tool-badge">🔍 Apollo.io</span>
+                        <span class="tool-badge">📧 Hunter.io</span>
+                        <span class="tool-badge">👤 Lusha</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color:#60A5FA;font-size:0.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.75rem;border-bottom:1px solid rgba(96,165,250,0.2);padding-bottom:0.4rem;">Screening</h4>
+                    <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                        <span class="tool-badge">📹 Zoom / Google Meet</span>
+                        <span class="tool-badge">🎬 Loom (Async Screen)</span>
+                        <span class="tool-badge">📊 Google Sheets</span>
+                        <span class="tool-badge">📝 Notion</span>
+                    </div>
+                </div>
+                <div>
+                    <h4 style="color:#60A5FA;font-size:0.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:0.75rem;border-bottom:1px solid rgba(96,165,250,0.2);padding-bottom:0.4rem;">Coordination</h4>
+                    <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                        <span class="tool-badge">💬 Slack</span>
+                        <span class="tool-badge">📅 Calendly</span>
+                        <span class="tool-badge">📧 Gmail / Outlook</span>
+                        <span class="tool-badge">🔗 LinkedIn Messaging</span>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:1.2rem;padding:0.8rem 1.2rem;border-radius:10px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);" class="reveal">
+                <p style="color:#C9A84C;font-size:0.82rem;margin:0;font-weight:500;">⚡ I integrate directly into your existing ATS, Slack workspace, and hiring process — zero overhead for your team.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: CASE STUDIES -->
+    <div class="slide slide-7" data-slide="7">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:400px;height:400px;top:-90px;right:-80px;background:#3B82F6;opacity:0.09;"></div>
+            <div class="blob" style="width:250px;height:250px;bottom:-50px;left:-40px;background:#C9A84C;opacity:0.07;"></div>
+        </div>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;" class="reveal">Proof of Work</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:1rem;" class="reveal">Selected Case Studies</h2>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.9rem;" class="reveal">
+                <div class="glass-card" style="padding:1.1rem;">
+                    <div style="font-size:1.5rem;margin-bottom:0.5rem;">📊</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">Lead Data Engineer</div>
+                    <div style="color:#60A5FA;font-size:0.72rem;margin-bottom:0.5rem;">FinTech SaaS · Series B</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:0.75rem;">Role open 94 days with other recruiters. Needed Spark + Kafka + Databricks expertise for real-time pipeline modernization.</div>
+                    <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:0.5rem;">
+                        <div style="font-size:0.72rem;color:#4ADE80;font-weight:700;">✅ Hired in 18 days · $155K · Role unblocked product launch</div>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding:1.1rem;">
+                    <div style="font-size:1.5rem;margin-bottom:0.5rem;">⚡</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">Staff Java Architect (EDA)</div>
+                    <div style="color:#60A5FA;font-size:0.72rem;margin-bottom:0.5rem;">Digital Banking · Enterprise</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:0.75rem;">Needed deep EDA expertise: Event Sourcing, CQRS, Kafka broker management. 3 agencies had failed for 6 weeks.</div>
+                    <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:0.5rem;">
+                        <div style="font-size:0.72rem;color:#4ADE80;font-weight:700;">✅ Hired in 22 days · 100% shortlist-to-interview rate</div>
+                    </div>
+                </div>
+                <div class="glass-card" style="padding:1.1rem;">
+                    <div style="font-size:1.5rem;margin-bottom:0.5rem;">🌐</div>
+                    <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.2rem;">3× Full Stack Engineers</div>
+                    <div style="color:#60A5FA;font-size:0.72rem;margin-bottom:0.5rem;">Remote SaaS Startup · Seed/A</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:0.75rem;">3 roles, tight $130–145K budget, async-first culture. Job boards flooded them with 200+ unqualified applicants.</div>
+                    <div style="border-top:1px solid rgba(255,255,255,0.08);padding-top:0.5rem;">
+                        <div style="font-size:0.72rem;color:#4ADE80;font-weight:700;">✅ All 3 filled in 35 days · 100% offer acceptance · 6-mo retention</div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top:1rem;display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;" class="reveal">
+                <div style="text-align:center;padding:0.6rem;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+                    <div style="font-size:1.4rem;font-weight:900;color:#60A5FA;" class="stat-glow" data-count="18">0</div>
+                    <div style="font-size:0.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Days (Fastest Fill)</div>
+                </div>
+                <div style="text-align:center;padding:0.6rem;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+                    <div style="font-size:1.4rem;font-weight:900;color:#C9A84C;" class="stat-glow" data-count="100">0</div>
+                    <div style="font-size:0.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">% Shortlist Conv.</div>
+                </div>
+                <div style="text-align:center;padding:0.6rem;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+                    <div style="font-size:1.4rem;font-weight:900;color:#4ADE80;" class="stat-glow" data-count="60">0</div>
+                    <div style="font-size:0.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">% Passive Candidates</div>
+                </div>
+                <div style="text-align:center;padding:0.6rem;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);">
+                    <div style="font-size:1.4rem;font-weight:900;color:#F472B6;" class="stat-glow" data-count="4">0</div>
+                    <div style="font-size:0.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Years Experience</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8: TESTIMONIALS -->
+    <div class="slide slide-8" data-slide="8">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:380px;height:380px;top:-80px;right:-70px;background:#3B82F6;opacity:0.09;"></div>
+            <div class="blob" style="width:260px;height:260px;bottom:-60px;left:-50px;background:#C9A84C;opacity:0.07;"></div>
+        </div>
+        <div class="content">
+            <p style="color:#60A5FA;font-size:0.8rem;letter-spacing:4px;text-transform:uppercase;font-weight:600;margin-bottom:0.4rem;" class="reveal">Testimonials</p>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700;margin-bottom:1.2rem;" class="reveal">What Hiring Managers Say</h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;" class="reveal">
+                <div class="quote-card">
+                    <p style="color:#cbd5e1;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">"Syed understood our technical requirements better than most internal recruiters. He submitted 3 candidates — all 3 were strong. That almost never happens."</p>
+                    <div style="font-size:0.75rem;color:#60A5FA;font-weight:700;">— VP of Engineering · US FinTech SaaS</div>
+                </div>
+                <div class="quote-card">
+                    <p style="color:#cbd5e1;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">"We searched for a Staff Java Architect for 6 weeks with other agencies. Syed filled the role in 22 days. The quality was night and day."</p>
+                    <div style="font-size:0.75rem;color:#60A5FA;font-weight:700;">— CTO · Digital Banking Infrastructure</div>
+                </div>
+                <div class="quote-card">
+                    <p style="color:#cbd5e1;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">"He gets it. He understands event-driven systems, data pipelines, and cloud architecture — so the candidates he sends have already been vetted technically."</p>
+                    <div style="font-size:0.75rem;color:#60A5FA;font-weight:700;">— Engineering Manager · Remote SaaS Platform</div>
+                </div>
+                <div class="quote-card">
+                    <p style="color:#cbd5e1;font-size:0.82rem;font-style:italic;margin-bottom:0.5rem;">"Syed filled 3 Full Stack roles in just over a month. More importantly, all 3 hires are still here 6 months later and crushing it. That's the real measure."</p>
+                    <div style="font-size:0.75rem;color:#60A5FA;font-weight:700;">— Co-Founder & CTO · Series A SaaS Startup</div>
+                </div>
+            </div>
+            <div style="margin-top:1rem;padding:0.8rem 1.2rem;border-radius:10px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);text-align:center;" class="reveal">
+                <p style="color:#C9A84C;font-size:0.82rem;margin:0;font-weight:600;">⭐⭐⭐⭐⭐ &nbsp; Rated by Engineering Leaders at Series A through Enterprise companies</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: NEXT STEPS & CONTACT -->
+    <div class="slide slide-9" data-slide="9">
+        <div class="gradient-mesh">
+            <div class="blob" style="width:520px;height:520px;top:-120px;right:-100px;background:#3B82F6;opacity:0.14;"></div>
+            <div class="blob" style="width:350px;height:350px;bottom:-80px;left:-60px;background:#C9A84C;opacity:0.11;"></div>
+            <div class="blob" style="width:220px;height:220px;top:30%;left:8%;background:#1D4ED8;opacity:0.09;"></div>
+        </div>
+        <canvas class="particle-canvas" style="position:absolute;inset:0;z-index:1;"></canvas>
+        <div class="content text-center">
+            <div style="font-size:72px;margin-bottom:0.75rem;animation:float 3s ease-in-out infinite;" class="reveal">🤝</div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,3.2rem);font-weight:900;background:linear-gradient(135deg,#60A5FA,#93C5FD,#C9A84C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:0.75rem;" class="reveal">Let's Build Your Team</h2>
+            <p style="color:#94a3b8;font-size:0.9rem;margin-bottom:1.5rem;max-width:520px;margin-left:auto;margin-right:auto;" class="reveal">Start with a free 30-minute discovery call. No commitment — just an honest conversation about your hiring challenges.</p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.9rem;margin-bottom:1.2rem;" class="reveal">
+                <div class="glass-card" style="padding:1rem;text-align:center;">
+                    <div style="font-size:1.5rem;margin-bottom:0.3rem;">📅</div>
+                    <div style="font-weight:700;font-size:0.82rem;margin-bottom:0.2rem;">Project-Based</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">Fixed fee per role. 1–3 active openings.</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;text-align:center;border-color:rgba(59,130,246,0.4);">
+                    <div style="font-size:1.5rem;margin-bottom:0.3rem;">🔄</div>
+                    <div style="font-weight:700;font-size:0.82rem;margin-bottom:0.2rem;">Retained Partner</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">Monthly retainer. 5+ roles/quarter.</div>
+                </div>
+                <div class="glass-card" style="padding:1rem;text-align:center;">
+                    <div style="font-size:1.5rem;margin-bottom:0.3rem;">🏠</div>
+                    <div style="font-weight:700;font-size:0.82rem;margin-bottom:0.2rem;">Fractional Embedded</div>
+                    <div style="color:#94a3b8;font-size:0.72rem;">Part-time internal recruiter model.</div>
+                </div>
+            </div>
+            <div style="display:flex;gap:1.2rem;justify-content:center;flex-wrap:wrap;" class="reveal">
+                <span class="tool-badge" style="font-size:0.85rem;padding:0.5rem 1.2rem;">🔗 LinkedIn: Syed Umar Ali</span>
+                <span class="tool-badge" style="font-size:0.85rem;padding:0.5rem 1.2rem;">🕐 8 AM–5:30 PM Eastern Time</span>
+                <span class="tool-badge" style="font-size:0.85rem;padding:0.5rem 1.2rem;">💼 Intellibus</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="nav-controls">
+    <button class="nav-btn" onclick="changeSlide(-1)">&#8249;</button>
+    <div class="slide-dots" id="dots"></div>
+    <button class="nav-btn" onclick="changeSlide(1)">&#8250;</button>
+    <span class="slide-counter" id="counter">1 / 9</span>
+</div>
+
+<script>
+    let current = 1;
+    const total = document.querySelectorAll('.slide').length;
+    const dotsContainer = document.getElementById('dots');
+    const counter = document.getElementById('counter');
+    for (let i = 1; i <= total; i++) { const dot = document.createElement('div'); dot.className = 'dot' + (i === 1 ? ' active' : ''); dot.onclick = () => goToSlide(i); dotsContainer.appendChild(dot); }
+    function goToSlide(n) {
+        const prev = document.querySelector('.slide.active');
+        const next = document.querySelector('.slide[data-slide="' + n + '"]');
+        if (prev) prev.classList.remove('active');
+        if (next) { next.classList.add('active'); animateSlide(next); }
+        current = n; updateNav();
+    }
+    function changeSlide(dir) { let n = current + dir; if (n < 1) n = total; if (n > total) n = 1; goToSlide(n); }
+    function updateNav() { document.querySelectorAll('.dot').forEach((d,i) => d.classList.toggle('active', i+1 === current)); counter.textContent = current + ' / ' + total; }
+    document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); changeSlide(1); } if (e.key === 'ArrowLeft') { e.preventDefault(); changeSlide(-1); } });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+    document.addEventListener('touchend', (e) => { const diff = touchStartX - e.changedTouches[0].clientX; if (Math.abs(diff) > 50) changeSlide(diff > 0 ? 1 : -1); });
+
+    function animateSlide(slide) {
+        slide.querySelectorAll('.reveal').forEach((el, i) => {
+            el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+            el.offsetHeight;
+            const delay = i * 0.08;
+            el.style.transition = 'opacity 0.35s ease ' + delay + 's, transform 0.35s ease ' + delay + 's';
+            el.style.opacity = '1'; el.style.transform = 'translateY(0px)';
+        });
+        animateSlideEffects(slide);
+    }
+
+    function animateSlideEffects(slide) {
+        slide.querySelectorAll('[data-count]:not(.counted)').forEach(el => {
+            el.classList.add('counted');
+            const target = parseInt(el.dataset.count);
+            const suffix = el.dataset.suffix || '', prefix = el.dataset.prefix || '';
+            let cur = 0; const step = target / 40;
+            const timer = setInterval(() => { cur += step; if (cur >= target) { cur = target; clearInterval(timer); } el.textContent = prefix + Math.round(cur).toLocaleString() + suffix; }, 30);
+        });
+        slide.querySelectorAll('.bar-fill:not(.fill-init)').forEach((bar, i) => {
+            bar.classList.add('fill-init');
+            bar.style.width = '0%'; bar.style.transition = 'width 0.5s ease ' + (i * 0.08) + 's'; bar.offsetHeight; bar.style.width = bar.dataset.width + '%';
+        });
+    }
+
+    document.addEventListener('mousemove', (e) => {
+        const s = document.querySelector('.mouse-spotlight');
+        if (s) s.style.background = 'radial-gradient(600px circle at ' + e.clientX + 'px ' + e.clientY + 'px, rgba(59,130,246,0.05), transparent 40%)';
+    });
+
+    window.initParticles = function(canvas, options) {
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight;
+        const interactive = options.interactive !== false;
+        const count = options.count || (interactive ? 55 : 18);
+        let mx = -1000, my = -1000;
+        const particles = Array.from({length: count}, () => ({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, vx:(Math.random()-0.5)*0.3, vy:(Math.random()-0.5)*0.3, size:Math.random()*2.5+0.8, alpha:Math.random()*0.3+0.08 }));
+        if (interactive) { canvas.addEventListener('mousemove', (e) => { const r = canvas.getBoundingClientRect(); mx=e.clientX-r.left; my=e.clientY-r.top; }); canvas.addEventListener('mouseleave', () => { mx=-1000; my=-1000; }); }
+        (function animate() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            particles.forEach(p => {
+                if (interactive) { const dx=p.x-mx, dy=p.y-my, dist=Math.sqrt(dx*dx+dy*dy); if (dist<120) { const force=(120-dist)/120*2; p.vx+=(dx/dist)*force*0.1; p.vy+=(dy/dist)*force*0.1; } }
+                p.vx*=0.98; p.vy*=0.98; p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0) p.x=canvas.width; if(p.x>canvas.width) p.x=0; if(p.y<0) p.y=canvas.height; if(p.y>canvas.height) p.y=0;
+                ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle='rgba(59,130,246,'+p.alpha+')'; ctx.fill();
+            });
+            requestAnimationFrame(animate);
+        })();
+    };
+    document.querySelectorAll('.particle-canvas').forEach(c => window.initParticles(c, {interactive:true, count:55}));
+    document.querySelectorAll('.particle-canvas-ambient').forEach(c => window.initParticles(c, {interactive:false, count:18}));
+    try { animateSlide(document.querySelector('.slide.active')); } catch(e) {}
+</script>
+</body>
+</html>
